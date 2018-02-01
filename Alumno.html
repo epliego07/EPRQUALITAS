@@ -1,0 +1,63 @@
+
+<html>
+
+  <head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.7/angular.min.js"></script>
+
+  </head>
+
+
+
+  <body ng-app="miApp"
+        ng-controller="controladorCertificado">
+
+    <p> 
+      El alumno {{alumno}}      
+    </p>
+
+    <table>
+      <tr ng-repeat = "curso in cursos">
+        <td ng-bind="curso.nombre">
+        </td>
+
+        <td>
+          <input type="checkbox" ng-model="curso.aprobo" ng-click="calcular()">
+        </td>
+      </tr>
+    </table>
+
+
+
+   Aprobo : {{total}} cursos
+
+
+    <script>         
+         angular.module("miApp",[]) 
+                .controller("controladorCertificado",
+                  function ($scope){   
+                      $scope.total=0;             
+                      $scope.alumno='Alejandro';
+                      $scope.cursos=[ 
+                        {nombre: "HTML/CSS", aprobo: false}, 
+                        {nombre: "JQUERY", aprobo:false}, 
+                        {nombre: "Angular JS", aprobo : false}, 
+                      ];
+
+
+                        $scope.calcular=function(){
+                          var contador=0;
+                          for (var i=0; i<$scope.cursos.length; i++){
+                            if ($scope.cursos[i].aprobo){
+                              contador++;
+                            }
+                          }
+                          $scope.total=contador;
+                    }
+                  });
+    </script>
+
+
+
+</body>
+</head>
+</html>

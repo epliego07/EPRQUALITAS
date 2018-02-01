@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <f:view contentType="text/html">
+        <h:head>
+            <f:facet name="first">
+                <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+                <title>PrimeFaces</title>
+                <style>
+                    .text-right{
+                        float:right
+                    }
+                </style>
+            </f:facet>
+        </h:head>
+        <h:body>
+            <h:form>
+                <p:growl id="growl" severity="info" showSummary="true" showDetail="true" sticky="false" />  
+                <p:panel id="panel" header="Factura Prime Faces " style="margin-bottom:10px;">
+                    <p:messages id="messages" severity="error" showSummary="true" showDetail="true" />
+                    <h:panelGrid columns="2" cellpadding="5">
+                        <p:outputLabel for="cliente" value="Clientes: "/>
+                        <p:autoComplete  id="cliente" value="#{facturaMBean.cliente}" completeMethod="#{facturaMBean.completarCliente}"
+                                         var="c" itemLabel="#{c.nombre}" itemValue="#{c}" converter="clienteConverter" forceSelection="true"  >
+                            <p:ajax event="itemSelect" listener="#{facturaMBean.onItemSelect}" update="@form" />
+                        </p:autoComplete>
+                    </h:panelGrid>
+                    <div class="ui-g">
+                        <div class="ui-g-12 ui-md-2 ui-lg-2">
+                            <p:outputLabel for="rfc" value="RFC: " styleClass="text-right"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-4 ui-lg-2">
+                            <p:inputText id="rfc" value="#{facturaMBean.cliente.rfc}"/>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-2 ui-lg-2">
+                            <p:outputLabel for="telefono" value="TELEFONO: " styleClass="text-right"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-4 ui-lg-2">
+                            <p:inputMask id="telefono"  mask="(99) 9999 9999"/>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-2 ui-lg-2">
+                            <p:outputLabel for="email" value="Email: " styleClass="text-right"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-4 ui-lg-2">
+                            <p:inputText id="email" value="#{facturaMBean.cliente.email}"/>
+                        </div>
+
+                        <div class="ui-g-12 ui-md-2 ui-lg-2">
+                            <p:outputLabel for="direccion" value="Direccion: " styleClass="text-right"/>
+                        </div>
+                        <div class="ui-g-12 ui-md-4 ui-lg-2">
+                            <p:inputText id="direccion" value="#{facturaMBean.cliente.direccion}"/>
+                        </div>
+
+                    </div>
+                </p:panel>
+                <p:panel id="panel-detalle" header="Factura Prime Detalle " style="margin-bottom:10px;">
+                    <h:dataTable value="#{ facturaMBean.partidas }" var="p">
+                        <h:column>
+                            <f:facet name="header">ID</f:facet>
+                            <h:selectOneMenu id="articulo" value="#{ p.articulo }"
+                                             converter="#{ articuloConverter }">
+                                <f:selectItem itemLabel="Seleccione..." />
+                                <f:selectItems value="#{ facturaMBean.articulos }" var="a"
+                                               itemValue="#{ a }" itemLabel="#{ a.id }" />
+                                <f:ajax event="change" listener="#{ facturaMBean.calcularImporte(p) }" execute="@this" render="@form" />
+                            </h:selectOneMenu>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Descripción</f:facet>
+                            <h:inputText id="descripcion" value="#{ p.articulo.descripcion }" readonly="true" />
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Precio</f:facet>
+                            <h:inputText id="precio" value="#{ p.articulo.precio }" readonly="true" />
+                        </h:column>
+
+                        <h:column>
+                            <f:facet name="header">Cantidad</f:facet>
+                            <p:inputNumber value="#{ p.cantidad }" minValue="#{p.articulo.existencia}">
+                                <f:ajax event="change" listener="#{ facturaMBean.calcularImporte(p) }" execute="@this" render="@form" />
+                            </p:inputNumber>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Importe</f:facet>
+                            <h:inputText value="#{ p.importe }" readonly="true" />
+                        </h:column>
+                    </h:dataTable>
+                </p:panel>
+                <p:commandButton  action="#{authMBean.login()}" value="Iniciar Sesion" update="panel"    />
+            </h:form>
+        </h:body>
+    </f:view>
+</html>
+
